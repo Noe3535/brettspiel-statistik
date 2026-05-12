@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Brettspiel Statistik</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <!-- Icons -->
+    <script src="https://kit.fontawesome.com/a2d9d6a64f.js" crossorigin="anonymous"></script>
+
+</head>
+<body>
+
+    <div class="app">
+
+        <h1>🎲 Brettspiel Statistik</h1>
+
+        <!-- TABS -->
+        <div class="tabs">
+
+            <button class="tabButton active" onclick="zeigeTab('schreiben')">
+                <i class="fas fa-pen"></i><br>
+                Schreiben
+            </button>
+
+            <button class="tabButton" onclick="zeigeTab('statistik')">
+                <i class="fas fa-chart-pie"></i><br>
+                Statistik
+            </button>
+
+            <button class="tabButton" onclick="zeigeTab('verlauf')">
+                <i class="fas fa-clock"></i><br>
+                Verlauf
+            </button>
+
+        </div>
+
+        <!-- SCHREIBEN -->
+        <div id="schreiben" class="tab">
+
+            <div class="card">
+
+                <h2>🎮 Spiel eintragen</h2>
+
+                <!-- SPIEL -->
+                <label>Spiel</label>
+
+                <div class="dropdownRow">
+
+                    <select id="spielSelect"></select>
+
+                    <button
+                        class="miniAdd"
+                        onclick="spielHinzufuegenPopup()"
+                    >
+                        ➕
+                    </button>
+
+                    <button
+                        class="miniDelete"
+                        onclick="spielLoeschenDropdown()"
+                    >
+                        🗑
+                    </button>
+
+                </div>
+
+                <!-- GEWINNER -->
+                <label>Gewinner</label>
+
+                <div class="dropdownRow">
+
+                    <select id="gewinner"></select>
+
+                    <button
+                        class="miniAdd"
+                        onclick="spielerHinzufuegenPopup()"
+                    >
+                        ➕
+                    </button>
+
+                    <button
+                        class="miniDelete"
+                        onclick="spielerLoeschenDropdown()"
+                    >
+                        🗑
+                    </button>
+
+                </div>
+
+                <!-- SPEICHERN -->
+                <button class="speichernButton" onclick="speichern()">
+                    💾 Spiel speichern
+                </button>
+
+            </div>
+
+        </div>
+
+        <!-- STATISTIK -->
+        <div id="statistik" class="tab" style="display:none;">
+
+            <div class="card">
+
+                <h2>🏆 Gesamtsiege</h2>
+
+                <div id="gesamtStats"></div>
+
+            </div>
+
+            <div class="card">
+
+                <h2>📊 Siege pro Spiel</h2>
+
+                <div id="spielStats"></div>
+
+            </div>
+
+        </div>
+
+        <!-- VERLAUF -->
+        <div id="verlauf" class="tab" style="display:none;">
+
+            <div class="card">
+
+                <h2>🕒 Verlauf</h2>
+
+                <div id="verlaufListe"></div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <script src="script.js"></script>
+
+</body>
+</html>

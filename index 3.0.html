@@ -1,0 +1,281 @@
+<!<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <title>Event Feed mit Google Maps & Löschen</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0; padding: 0;
+      background: #f0f0f0;
+    }
+    header {
+      background: #333;
+      color: white;
+      padding: 10px;
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+    }
+    header button {
+      background: #555;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+    header button.active {
+      background: #4CAF50;
+    }
+    .view {
+      display: none;
+      padding: 20px;
+      max-width: 600px;
+      margin: auto;
+      background: white;
+      margin-top: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    .view.active {
+      display: block;
+    }
+    form input, form textarea {
+      width: 100%;
+      margin: 8px 0;
+      padding: 8px;
+      box-sizing: border-box;
+    }
+    form button {
+      background: #4CAF50;
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      cursor: pointer;
+      border-radius: 5px;
+      font-size: 16px;
+    }
+    .event {
+      border-bottom: 1px solid #ddd;
+      padding: 15px 0;
+    }
+    .event h3 {
+      margin: 0 0 5px 0;
+    }
+    .event p {
+      margin: 5px 0;
+    }
+    iframe {
+      width: 100%;
+      height: 200px;
+      border: none;
+      margin-top: 10px;
+      border-radius: 5px;
+    }
+    .event button {
+      margin-right: 10px;
+      padding: 6px 12px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    .like-btn {
+      background: #2196F3;
+      color: white;
+    }
+    .save-btn {
+      background: #FF9800;
+      color: white;
+    }
+    .delete-btn {
+      background: #f44336;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <button id="btnAdd" class="active">Event hinzufügen</button>
+    <button id="btnFeed">Alle Partys</button>
+    <button id="btnProfile">Mein Profil</button>
+  </header>
+
+  <div id="addView" class="view active">
+    <h2>Event hinzufügen</h2>
+    <form id="eventForm">
+      <input type="text" id="title" placeholder="Event-Titel" required />
+      <textarea id="description" placeholder="Beschreibung" required></textarea>
+      <input type="date" id="date" required />
+      <input type="text" id="location" placeholder="Adresse (für Google Maps)" required />
+      <button type="submit">Hinzufügen</button>
+    </form>
+  </div>
+
+  <div id="feedView" class="view">
+    <h2>Alle Partys</h2>
+    <div id="eventList"></div>
+  </div>
+
+  <div id="profileView" class="view">
+    <h2>Gespeicherte Events</h2>
+    <div id="savedList"></div>
+  </div>
+
+<script>
+  // User ID speichern / generieren
+  let userId = localStorage.getItem('userId');
+  if (!userId) {
+    userId = 'user-' + Math.random().toString(36).substring(2, 10);
+    localStorage.setItem('userId', userId);
+  }
+
+  // Buttons und Views
+  const btnAdd = document.getElementById('btnAdd');
+  const btnFeed = document.getElementById('btnFeed');
+  const btnProfile = document.getElementById('btnProfile');
+  const addView = document.getElementById('addView');
+  const feedView = document.getElementById('feedView');
+  const profileView = document.getElementById('profileView');
+
+  const form = document.getElementById('eventForm');
+  const eventList = document.getElementById('eventList');
+  const savedList = document.getElementById('savedList');
+
+  let events = JSON.parse(localStorage.getItem('events')) || [];
+  let savedEvents = JSON.parse(localStorage.getItem('savedEvents')) || [];
+
+  // Ansicht wechseln
+  function showView(view) {
+    addView.classList.remove('active');
+    feedView.classList.remove('active');
+    profileView.classList.remove('active');
+    btnAdd.classList.remove('active');
+    btnFeed.classList.remove('active');
+    btnProfile.classList.remove('active');
+
+    view.classList.add('active');
+    if(view === addView) btnAdd.classList.add('active');
+    if(view === feedView) btnFeed.classList.add('active');
+    if(view === profileView) btnProfile.classList.add('active');
+  }
+
+  btnAdd.addEventListener('click', () => showView(addView));
+  btnFeed.addEventListener('click', () => { showView(feedView); renderFeed(); });
+  btnProfile.addEventListener('click', () => { showView(profileView); renderSaved(); });
+
+  // Event hinzufügen
+  form.addEventListener('submit', e => {
+    e.preventDefault();
+    const title = document.getElementById('title').value.trim();
+    const description = document.getElementById('description').value.trim();
+    const date = document.getElementById('date').value;
+    const location = document.getElementById('location').value.trim();
+
+    if (!title || !description || !date || !location) {
+      alert('Bitte alle Felder ausfüllen.');
+      return;
+    }
+
+    const event = {
+      id: Date.now(),
+      userId,
+      title,
+      description,
+      date,
+      location,
+      likes: 0
+    };
+    events.unshift(event);
+    localStorage.setItem('events', JSON.stringify(events));
+    form.reset();
+    alert('Event hinzugefügt!');
+  });
+
+  // Feed anzeigen mit Google Maps Karte
+  function renderFeed() {
+    eventList.innerHTML = '';
+    if (events.length === 0) {
+      eventList.innerHTML = '<p>Keine Events gefunden.</p>';
+      return;
+    }
+    events.forEach(event => {
+      const div = document.createElement('div');
+      div.className = 'event';
+
+      // Google Maps URL encodieren
+      const mapsUrl = 'https://www.google.com/maps/embed/v1/place?key=AIzaSyD-3LXYJtpq5kqzR2X9a8ZZ4yUwxVEBBOg&q=' + encodeURIComponent(event.location);
+
+      div.innerHTML = `
+        <h3>${event.title}</h3>
+        <p>${event.description}</p>
+        <p><strong>Datum:</strong> ${event.date}</p>
+        <p><strong>Adresse:</strong> ${event.location}</p>
+        <iframe
+          src="${mapsUrl}"
+          allowfullscreen>
+        </iframe>
+        <p><strong>Likes:</strong> ${event.likes}</p>
+        <button class="like-btn" onclick="likeEvent(${event.id})">Like</button>
+        <button class="save-btn" onclick="saveEvent(${event.id})">Speichern</button>
+        ${event.userId === userId ? `<button class="delete-btn" onclick="deleteEvent(${event.id})">Löschen</button>` : ''}
+      `;
+      eventList.appendChild(div);
+    });
+  }
+
+  // Gespeicherte Events anzeigen
+  function renderSaved() {
+    savedList.innerHTML = '';
+    if (savedEvents.length === 0) {
+      savedList.innerHTML = '<p>Keine gespeicherten Events.</p>';
+      return;
+    }
+    savedEvents.forEach(event => {
+      const div = document.createElement('div');
+      div.className = 'event';
+      div.innerHTML = `
+        <h3>${event.title}</h3>
+        <p>${event.description}</p>
+        <p><strong>Datum:</strong> ${event.date}</p>
+        <p><strong>Adresse:</strong> ${event.location}</p>
+      `;
+      savedList.appendChild(div);
+    });
+  }
+
+  // Like-Event Funktion
+  window.likeEvent = function(id) {
+    const event = events.find(e => e.id === id);
+    if(event) {
+      event.likes++;
+      localStorage.setItem('events', JSON.stringify(events));
+      renderFeed();
+    }
+  }
+
+  // Event speichern
+  window.saveEvent = function(id) {
+    const event = events.find(e => e.id === id);
+    if(event && !savedEvents.find(e => e.id === id)) {
+      savedEvents.push(event);
+      localStorage.setItem('savedEvents', JSON.stringify(savedEvents));
+      alert('Event gespeichert!');
+    }
+  }
+
+  // Event löschen (nur für Besitzer)
+  window.deleteEvent = function(id) {
+    if(confirm('Willst du dieses Event wirklich löschen?')){
+      events = events.filter(e => e.id !== id);
+      localStorage.setItem('events', JSON.stringify(events));
+      renderFeed();
+    }
+  }
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,105 @@
+body{
+    background: linear-gradient(to bottom, #141e30, #243b55);
+    font-family: Arial;
+    color: white;
+    margin: 0;
+    padding: 20px;
+}
+
+.app{
+    max-width: 600px;
+    margin: auto;
+}
+
+h1{
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+.tabs{
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.tabButton{
+    flex: 1;
+    background: #1f2a38;
+    color: white;
+    border: none;
+    padding: 14px;
+    border-radius: 15px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.active{
+    background: #00b894;
+}
+
+.card{
+    background: rgba(255,255,255,0.08);
+    backdrop-filter: blur(10px);
+    padding: 20px;
+    border-radius: 20px;
+    margin-bottom: 20px;
+}
+
+label{
+    display: block;
+    margin-top: 15px;
+    margin-bottom: 5px;
+}
+
+select,
+button{
+    width: 100%;
+    padding: 14px;
+    border-radius: 12px;
+    border: none;
+    margin-top: 10px;
+    font-size: 15px;
+}
+
+button{
+    cursor: pointer;
+    background: #00b894;
+    color: white;
+}
+
+.speichernButton{
+    background: #0984e3;
+    margin-top: 20px;
+}
+
+.loeschButton{
+    background: #e74c3c;
+    margin-top: 15px;
+}
+
+.statBox{
+    background: rgba(0,0,0,0.25);
+    padding: 15px;
+    border-radius: 15px;
+    margin-top: 12px;
+}
+
+.dropdownRow{
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.miniDelete{
+    width: 55px;
+    min-width: 55px;
+    background: #e74c3c;
+    font-size: 20px;
+}
+
+.miniAdd{
+    width: 55px;
+    min-width: 55px;
+    background: #00b894;
+    font-size: 20px;
+}
