@@ -3,50 +3,184 @@
 <head>
 
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta
+        name="viewport"
+        content="
+            width=device-width,
+            initial-scale=1.0
+        "
+    >
 
     <title>Brettspiel Statistik</title>
 
     <link rel="stylesheet" href="style.css">
 
-    <!-- Icons -->
-    <script src="https://kit.fontawesome.com/a2d9d6a64f.js" crossorigin="anonymous"></script>
+    <script
+        src="https://kit.fontawesome.com/a2d9d6a64f.js"
+        crossorigin="anonymous"
+    ></script>
 
 </head>
 <body>
 
+    <!-- SIEGESANIMATION -->
+    <div
+        id="winAnimation"
+        class="winAnimation hidden"
+    >
+        🏆 Sieg gespeichert!
+    </div>
+
+    <!-- ACHIEVEMENT POPUP -->
+    <div
+        id="achievementPopup"
+        class="achievementPopup hidden"
+    >
+
+        <div id="achievementText"></div>
+
+    </div>
+
     <div class="app">
+
+        <!-- PROFILE -->
+        <div class="homeHeader">
+
+            <div class="profileCard">
+
+                <img
+                    id="profilbild1"
+                    src="https://i.pravatar.cc/150?img=12"
+                >
+
+                <input
+                    type="file"
+                    accept="image/*"
+                    onchange="
+                        profilbildAendern(
+                            event,
+                            'profilbild1',
+                            'bild1'
+                        )
+                    "
+                >
+
+                <h3>Noé</h3>
+
+            </div>
+
+            <div class="profileCard">
+
+                <img
+                    id="profilbild2"
+                    src="https://i.pravatar.cc/150?img=32"
+                >
+
+                <input
+                    type="file"
+                    accept="image/*"
+                    onchange="
+                        profilbildAendern(
+                            event,
+                            'profilbild2',
+                            'bild2'
+                        )
+                    "
+                >
+
+                <h3>Sina</h3>
+
+            </div>
+
+        </div>
 
         <h1>🎲 Brettspiel Statistik</h1>
 
         <!-- TABS -->
         <div class="tabs">
 
-            <button class="tabButton active" onclick="zeigeTab('schreiben')">
+            <button
+                class="tabButton active"
+                onclick="zeigeTab('home')"
+            >
+
+                <i class="fas fa-house"></i><br>
+
+                Home
+
+            </button>
+
+            <button
+                class="tabButton"
+                onclick="zeigeTab('schreiben')"
+            >
+
                 <i class="fas fa-pen"></i><br>
+
                 Schreiben
+
             </button>
 
-            <button class="tabButton" onclick="zeigeTab('statistik')">
+            <button
+                class="tabButton"
+                onclick="zeigeTab('statistik')"
+            >
+
                 <i class="fas fa-chart-pie"></i><br>
+
                 Statistik
+
             </button>
 
-            <button class="tabButton" onclick="zeigeTab('verlauf')">
+            <button
+                class="tabButton"
+                onclick="zeigeTab('verlauf')"
+            >
+
                 <i class="fas fa-clock"></i><br>
+
                 Verlauf
+
+            </button>
+
+            <button
+                class="tabButton"
+                onclick="zeigeTab('achievements')"
+            >
+
+                <i class="fas fa-trophy"></i><br>
+
+                Achievements
+
             </button>
 
         </div>
 
+        <!-- HOME -->
+        <div id="home" class="tab">
+
+            <div class="card">
+
+                <h2>👋 Willkommen zurück</h2>
+
+                <div id="homeStats"></div>
+
+            </div>
+
+        </div>
+
         <!-- SCHREIBEN -->
-        <div id="schreiben" class="tab">
+        <div
+            id="schreiben"
+            class="tab"
+            style="display:none;"
+        >
 
             <div class="card">
 
                 <h2>🎮 Spiel eintragen</h2>
 
-                <!-- SPIEL -->
                 <label>Spiel</label>
 
                 <div class="dropdownRow">
@@ -55,21 +189,24 @@
 
                     <button
                         class="miniAdd"
-                        onclick="spielHinzufuegenPopup()"
+                        onclick="
+                            spielHinzufuegenPopup()
+                        "
                     >
                         ➕
                     </button>
 
                     <button
                         class="miniDelete"
-                        onclick="spielLoeschenDropdown()"
+                        onclick="
+                            spielLoeschenDropdown()
+                        "
                     >
                         🗑
                     </button>
 
                 </div>
 
-                <!-- GEWINNER -->
                 <label>Gewinner</label>
 
                 <div class="dropdownRow">
@@ -78,23 +215,31 @@
 
                     <button
                         class="miniAdd"
-                        onclick="spielerHinzufuegenPopup()"
+                        onclick="
+                            spielerHinzufuegenPopup()
+                        "
                     >
                         ➕
                     </button>
 
                     <button
                         class="miniDelete"
-                        onclick="spielerLoeschenDropdown()"
+                        onclick="
+                            spielerLoeschenDropdown()
+                        "
                     >
                         🗑
                     </button>
 
                 </div>
 
-                <!-- SPEICHERN -->
-                <button class="speichernButton" onclick="speichern()">
+                <button
+                    class="speichernButton"
+                    onclick="speichern()"
+                >
+
                     💾 Spiel speichern
+
                 </button>
 
             </div>
@@ -102,13 +247,27 @@
         </div>
 
         <!-- STATISTIK -->
-        <div id="statistik" class="tab" style="display:none;">
+        <div
+            id="statistik"
+            class="tab"
+            style="display:none;"
+        >
 
             <div class="card">
 
                 <h2>🏆 Gesamtsiege</h2>
 
                 <div id="gesamtStats"></div>
+
+            </div>
+
+            <div class="card">
+
+                <h2>
+                    🎲 Gewinnchance nächstes Spiel
+                </h2>
+
+                <div id="chanceStats"></div>
 
             </div>
 
@@ -123,7 +282,11 @@
         </div>
 
         <!-- VERLAUF -->
-        <div id="verlauf" class="tab" style="display:none;">
+        <div
+            id="verlauf"
+            class="tab"
+            style="display:none;"
+        >
 
             <div class="card">
 
@@ -135,7 +298,28 @@
 
         </div>
 
+        <!-- ACHIEVEMENTS -->
+        <div
+            id="achievements"
+            class="tab"
+            style="display:none;"
+        >
+
+            <div class="card">
+
+                <h2>🏆 Achievements</h2>
+
+                <div id="achievementListe"></div>
+
+            </div>
+
+        </div>
+
     </div>
+
+    <script src="achievements.js"></script>
+
+    <script src="animations.js"></script>
 
     <script src="script.js"></script>
 
